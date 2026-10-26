@@ -173,10 +173,14 @@ node tests/decay.test.mjs          # 15 项：衰减数学（含「原版错误�
 node tests/host.test.mjs           #  7 项：宿主接线确实换成了新内核
 node tests/curve-backfill.test.mjs # 13 项：曲线采样 + 情绪回填
 node tests/smoke.mjs               #  1 项：假 ctx 真 apply，验证 4 工具 / 11 路由不崩
+node tests/e2e-http.mjs            #  全链路：记住→列表→曲线→回填→确认→改参→坏输入兜底
 ```
 
-共 36 项。`node --test` 在本机沙箱里会因 `spawn EPERM` 失败（需要子进程），
-所以测试文件直接 `node <file>` 运行 —— `node:test` 支持进程内跑。
+共 36 项断言 + 一条端到端链路。`node --test` 在本机沙箱里会因 `spawn EPERM` 失败
+（需要子进程），所以测试文件直接 `node <file>` 运行 —— `node:test` 支持进程内跑。
+
+端到端测试真的会驱动注册进来的 HTTP handler（用假的 req/res），
+包括验证 dry-run 确实不落盘、以及**非数字输入不会把配置写成 `null`**。
 
 ## License
 

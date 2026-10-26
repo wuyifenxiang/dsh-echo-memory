@@ -110,4 +110,17 @@ const cfg3 = await call('/dsh-echo-memory/config')
 assert.ok(cfg3.cfg.halfLifeEventDays >= 1, `半衰期不得 <1，实际 ${cfg3.cfg.halfLifeEventDays}`)
 assert.ok(cfg3.cfg.emotionGamma >= 0.05, `gamma 不得为 0，实际 ${cfg3.cfg.emotionGamma}`)
 
-console.log('e2e ok: 记住→列表→曲线→回填→确认→改参数 全链路通过')
+// 8. 非数字输入不能污染配置。
+// 回归：Number('abc')===NaN，Math.max(0,NaN) 仍是 NaN，JSON 序列化会存成 null，
+// 之后所有半衰期计算静默失效。这里必须回落到默认值而不是 null。
+await call('/dsh-echo-memory/config', { method: 'POST', body: { emotionHalfLifeSpan: 'abc', maxInject: 'x', threshold: null } })
+const cfg4 = await call('/dsh-echo-memory/config')
+for (const [k, v] of Object.entries({ emotionHalfLifeSpan: cfg4.cfg.emotionHalfLifeSpan, maxInject: cfg4.cfg.maxInject, threshold: cfg4.cfg.threshold })) {
+  assert.equal(typeof v, 'number', `${k} 应是数字，实际 ${JSON.stringify(v)}`)
+  assert.ok(Number.isFinite(v), `${k} 不得是 NaN/Infinity，实际 ${v}`)
+}
+// 而且这些值要真能算出半衰期（不是 null 导致的静默失效）
+const curve3 = await call('/dsh-echo-memory/curve')
+assert.ok(curve3.curve.series.every((s) => Number.isFinite(s.halfLifeDays)), '曲线半衰期必须是有限数')
+
+console.log('e2e ok: 记住→列表→曲线→回填→确认→改参数→坏输入兜底 全链路通过')
