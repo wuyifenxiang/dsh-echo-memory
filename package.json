@@ -18,6 +18,14 @@
     "emotion",
     "ai-companion"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wuyifenxiang/dsh-echo-memory.git"
+  },
+  "homepage": "https://github.com/wuyifenxiang/dsh-echo-memory#readme",
+  "bugs": {
+    "url": "https://github.com/wuyifenxiang/dsh-echo-memory/issues"
+  },
   "main": "lib/index.js",
   "exports": {
     ".": "./lib/index.js",

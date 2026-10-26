@@ -16,3 +16,7 @@ tmp/
 Thumbs.db
 .vscode/
 .idea/
+
+# 本地推送辅助脚本（含仓库地址，不属于插件本体）
+push.ps1
+push.bat
