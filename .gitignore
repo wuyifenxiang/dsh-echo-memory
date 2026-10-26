@@ -1,0 +1,18 @@
+# DSH 运行时会在这里落锁文件
+.dsh-ops-update-*.lock
+*.lock
+
+# 依赖
+node_modules/
+pnpm-lock.yaml
+package-lock.json
+
+# 测试临时目录
+tmp/
+*.log
+
+# 编辑器 / 系统
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

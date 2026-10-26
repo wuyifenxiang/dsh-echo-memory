@@ -1,0 +1,46 @@
+dsh-echo-memory
+===============
+
+本插件改编自 MingHuanYue/dsh-tide-memory（MIT License, Copyright (c) 2026
+dsh-tide-memory contributors），原项目地址：
+https://github.com/MingHuanYue/dsh-tide-memory
+
+保留原项目 MIT 许可证（见 LICENSE 文件）。
+
+主要改动（与上游 0.2.0 的差异）：
+
+1. 遗忘曲线方向反转
+   上游 lib/index.js 的 aliveness()：
+       const half = Number(row.emo) > 0 ? cfg.halfLifeEmoDays : cfg.halfLifeEventDays
+   其中 halfLifeEmoDays 默认 7 天、halfLifeEventDays 默认 30 天，
+   即「带情绪的事件比不带情绪的快 4 倍遗忘」。
+   本版抽出 lib/decay.js，改为连续函数：
+       halfLife = base × (1 + span × emo^gamma)
+   情绪越强 → 半衰期越长 → 遗忘越慢（emo=1 时默认 3 倍）。
+
+2. 排序分权重调整
+   上游：P = C × (0.55 + 0.25·act + 0.15·imp + 0.05·emo)
+   本版：P = C × (0.50 + 0.30·act + 0.12·imp + 0.08·emo)
+   把权重从 act 挪向 emo，并保证 P ≤ C（排序分不伪造证据）。
+
+3. 归档增加情绪豁免
+   上游：act < 0.05 且 hits === 0 即进冷宫。
+   本版：emo ≥ emotionArchiveGuard（默认 0.6）的不进冷宫，
+   否则算法允许长期保留、归档逻辑又会提前扫走，两头打架。
+
+4. 新增 decayProfile() 与设置页解释文案
+   每条记忆在设置页显示半衰期、情绪倍数、距淡出天数。
+
+5. 命名空间整体改名
+   tide-memory → echo-memory；工具 tide_* → echo_*；
+   存储目录 ~/.dsh/tide-memory → ~/.dsh/echo-memory；
+   HTTP 前缀 /dsh-tide-memory → /dsh-echo-memory。
+
+未改动的部分（沿用上游设计）：
+   - 证据分 C = s/(s+2) 与「证据决定进不进、鲜活度决定排多前」的两段式
+   - 二元组 + 单字的中文分词与库内自算 idf
+   - supersede / conflict 的过时标记与冲突摊开机制
+   - 冷宫（archive）不删除、可回看
+   - 每 agent 挂载、按工作区分桶、pulse 脉搏文件
+
+上游未声明任何对本改编的背书。

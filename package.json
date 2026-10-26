@@ -1,0 +1,65 @@
+{
+  "name": "dsh-echo-memory",
+  "version": "0.1.0",
+  "description": "情绪越强、忘得越慢的长期记忆：给 DeepSeek Harness 的记忆层加一条情绪驱动的艾宾浩斯遗忘曲线。",
+  "license": "MIT",
+  "author": "dsh-echo-memory contributors",
+  "contributors": [
+    "MingHuanYue (upstream dsh-tide-memory, MIT)"
+  ],
+  "type": "module",
+  "keywords": [
+    "deepseek-harness",
+    "dsh-plugin",
+    "memory",
+    "long-term-memory",
+    "ebbinghaus",
+    "forgetting-curve",
+    "emotion",
+    "ai-companion"
+  ],
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "tests",
+    "cordis.patch.yml",
+    "README.md",
+    "NOTICE",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node tests/decay.test.mjs && node tests/host.test.mjs && node tests/curve-backfill.test.mjs && node tests/smoke.mjs"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "slots"
+      ],
+      "external": [
+        "react"
+      ]
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh-tools": "*"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/dsh-tools": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "dsh": ">=0.1.7-rc.1",
+    "node": ">=22"
+  }
+}

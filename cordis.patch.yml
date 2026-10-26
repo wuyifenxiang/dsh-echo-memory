@@ -1,0 +1,3 @@
+- insert:
+    - id: echo-memory
+      name: dsh-echo-memory
